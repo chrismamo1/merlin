@@ -60,6 +60,10 @@ let float_literal =
   ['0'-'9'] ['0'-'9' '_']*
   ('.' ['0'-'9' '_']* )?
   (['e' 'E'] ['+' '-']? ['0'-'9'] ['0'-'9' '_']*)?
+let cppo_directive_name =
+  ("define"|"undef"|"if"|"ifdef"|"ifndef"|"else"|"elif"|"endif"|"include"|"warning"|"error"|"ext"|"endext")
+let cppo_directive_body =
+  blank* [blank identchar symbolchar]* ('\\' newline cppo_directive_body|(newline|eof))
 
 rule token = parse
   | newline
@@ -103,6 +107,8 @@ rule token = parse
   | '%'     { PERCENT }
   | ['*' '/' '%'] symbolchar *
             { INFIXOP3(Lexing.lexeme lexbuf) }
+  | blank* '#' blank* cppo_directive_name cppo_directive_body*
+            { CPPOCMD(Lexing.lexeme lexbuf) }
   | '#' (symbolchar | '#') +
             { let s = Lexing.lexeme lexbuf in
               SHARPOP s }
