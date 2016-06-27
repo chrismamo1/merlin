@@ -107,7 +107,7 @@ rule token = parse
   | '%'     { PERCENT }
   | ['*' '/' '%'] symbolchar *
             { INFIXOP3(Lexing.lexeme lexbuf) }
-  | blank* '#' blank* cppo_directive_name cppo_directive_body*
+  | blank* '#' blank* cppo_directive_name cppo_directive_body
             { CPPOCMD(Lexing.lexeme lexbuf) }
   | '#' (symbolchar | '#') +
             { let s = Lexing.lexeme lexbuf in
